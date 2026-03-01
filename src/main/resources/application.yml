@@ -1,0 +1,69 @@
+spring:
+  application:
+    name: mylife
+
+  # Database Configuration (SQLite)
+  datasource:
+    url: jdbc:sqlite:./data/mylife.db
+    driver-class-name: org.sqlite.JDBC
+
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  # Thymeleaf Configuration
+  thymeleaf:
+    cache: false
+    mode: HTML
+    encoding: UTF-8
+    prefix: classpath:/templates/
+    suffix: .html
+
+  # Cache Configuration
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=100,expireAfterWrite=10m
+
+# Server Configuration
+server:
+  port: 8080
+
+# API Configuration
+api:
+  # Weibo API Configuration
+  # Get these from https://open.weibo.com/
+  weibo:
+    app-id: ${WEIBO_APP_ID:}
+    app-secret: ${WEIBO_APP_SECRET:}
+    access-token: ${WEIBO_ACCESS_TOKEN:}
+    user-id: ${WEIBO_USER_ID:}
+
+  # Baidu Pan API Configuration
+  # Get these from https://pan.baidu.com/union
+  # 注意：使用 OAuth2 授权后，access-token 和 refresh-token 会自动保存到数据库
+  # 这里只需要配置 app-id 和 app-secret 即可
+  baidu-pan:
+    app-id: ${BAIDU_APP_ID:122190995}
+    app-key: ${BAIDU_APP_KEY:IrBtzFSTEFTqm2mVzz887YyBToATsi9A}
+    app-secret: ${BAIDU_APP_SECRET:jEGhfBb4Pzl5uhEBdZa8Fkz4Eyur2aXG}
+    access-token: ${BAIDU_ACCESS_TOKEN:}
+    refresh-token: ${BAIDU_REFRESH_TOKEN:}
+    # 回调地址（也可以在 OAuthController 中配置）
+    redirect-uri: ${BAIDU_REDIRECT_URI:http://localhost:8080/oauth/baidu/callback}
+    # 百度网盘根目录（默认为 "/"，即网盘根目录）
+    # 可以指定为特定文件夹，如 "/apps/mylife" 或 "/我的应用"
+    root-dir: ${BAIDU_ROOT_DIR:/mylife}
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.mylife: DEBUG
+    org.springframework.web: INFO
+    org.hibernate: WARN

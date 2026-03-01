@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>授权回调 - MyLife</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/home}">
+                <i class="bi bi-house-heart"></i> MyLife
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-6 mx-auto">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <!-- 成功状态 -->
+                        <div th:if="${success}">
+                            <i class="bi bi-check-circle display-1 text-success"></i>
+                            <h4 class="mt-3 text-success" th:text="${message}">授权成功</h4>
+                            <p class="text-muted">正在跳转...</p>
+                            <a th:href="@{/oauth/baidu/status}" class="btn btn-primary">
+                                立即前往授权管理
+                            </a>
+                            <script>
+                                setTimeout(function() {
+                                    window.location.href = "/oauth/baidu/status";
+                                }, 2000);
+                            </script>
+                        </div>
+
+                        <!-- 失败状态 -->
+                        <div th:unless="${success}">
+                            <i class="bi bi-x-circle display-1 text-danger"></i>
+                            <h4 class="mt-3 text-danger" th:text="${message}">授权失败</h4>
+                            <a th:href="@{/oauth/baidu/status}" class="btn btn-primary mt-3">
+                                返回授权管理
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-4">
+        <div class="container text-center">
+            <p class="mb-0 text-muted">&copy; 2026 MyLife - 个人生活记录</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
