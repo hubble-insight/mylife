@@ -8,10 +8,83 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link th:href="@{/css/style.css}" rel="stylesheet">
     <style>
-        .main-container {
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body {
+            background: #f5f7fa;
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            min-height: calc(100vh - 56px - 73px); /* Full height minus navbar and footer */
+        }
+
+        #sidebar {
+            width: 280px;
+            background: #fff;
+            box-shadow: 0 0 30px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        #sidebar .sidebar-header {
+            padding: 1.5rem;
+            text-align: center;
+            background: var(--primary-gradient);
+            color: #fff;
+        }
+
+        #sidebar .sidebar-header h3 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        #sidebar .list-unstyled {
+            padding: 1rem;
+        }
+
+        #sidebar .list-unstyled .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        #sidebar .list-unstyled a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #555;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        #sidebar .list-unstyled a:hover {
+            background: #f0f2f5;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        #sidebar .list-unstyled a.active {
+            background: var(--primary-gradient);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        #sidebar .list-unstyled i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        #sidebar .nav-category {
+            padding: 0.5rem 1rem;
+            color: #999;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        #content {
+            flex-grow: 1;
+            padding: 2rem;
+            overflow-y: auto;
         }
         .card-file {
             cursor: pointer;
@@ -75,43 +148,42 @@
             display: flex;
             justify-content: space-between;
         }
-        .list-group-item .badge {
-            font-size: .8em;
-        }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" th:href="@{/home}">
-                <i class="bi bi-house-heart-fill"></i> MyLife
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/home}"><i class="bi bi-speedometer2"></i> 首页</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/weibo}"><i class="bi bi-weibo"></i> 动态</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/resources}"><i class="bi bi-cloud-fill"></i> 资源库</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/oauth/baidu/status}"><i class="bi bi-shield-lock-fill"></i> 授权管理</a>
-                    </li>
-                </ul>
-            </div>
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="bi bi-house-heart-fill"></i> MyLife</h3>
         </div>
-    </nav>
+        <ul class="list-unstyled components">
+             <li class="nav-item">
+                <a class="nav-link" th:href="@{/home}">
+                    <i class="bi bi-speedometer2"></i> 首页
+                </a>
+            </li>
+            <li class="nav-category">个人动态</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/weibo}">
+                    <i class="bi bi-weibo"></i> 微博动态
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/github}">
+                    <i class="bi bi-github"></i> GitHub
+                </a>
+            </li>
+            <li class="nav-category">个人数据</li>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/resources}">
+                    <i class="bi bi-cloud"></i> 资源库
+                </a>
+            </li>
+        </ul>
+    </div>
 
-    <!-- Main Content -->
-    <main class="container my-4 flex-grow-1">
-        <div class="row">
+    <div id="content">
+        <main class="container-fluid">
+            <div class="row">
             <!-- Sidebar -->
             <aside class="col-lg-3">
                 <div class="sticky-top" style="top: 2rem;">
@@ -188,7 +260,8 @@
                 </div>
             </section>
         </div>
-    </main>
+        </main>
+    </div>
 
     <!-- Modals -->
     <!-- Image Modal -->
@@ -199,14 +272,6 @@
     <div class="modal fade" id="audioModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="audioModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal" onclick="stopAudio()"></button></div><div class="modal-body p-4"><audio id="audioPlayer" controls class="w-100"><source id="audioSource" src="" type=""></audio></div></div></div></div>
     <!-- Document Modal -->
     <div class="modal fade" id="documentModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content" style="height: 95vh;"><div class="modal-header"><h5 class="modal-title" id="documentModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body flex-grow-1" style="overflow-y: auto;"><div id="documentContent" class="h-100"></div></div><div class="modal-footer"><a id="documentDownload" href="#" class="btn btn-primary" download><i class="bi bi-download"></i> 下载</a><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button></div></div></div></div>
-
-
-    <!-- Footer -->
-    <footer class="bg-light py-3 mt-auto">
-        <div class="container text-center">
-            <p class="mb-0 text-muted small">&copy; 2026 MyLife - 个人生活记录</p>
-        </div>
-    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>

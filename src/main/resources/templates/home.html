@@ -18,40 +18,80 @@
         }
 
         body {
-            background: linear-gradient(180deg, #f5f7fa 0%, #e4e8ec 100%);
+            background: #f5f7fa;
             min-height: 100vh;
+            display: flex;
         }
 
-        /* Navbar */
-        .navbar {
-            background: var(--primary-gradient) !important;
-            box-shadow: 0 2px 15px rgba(102, 126, 234, 0.4);
-            backdrop-filter: blur(10px);
+        #sidebar {
+            width: 280px;
+            background: #fff;
+            box-shadow: 0 0 30px rgba(0,0,0,0.05);
+            transition: all 0.3s;
         }
 
-        .navbar-brand {
+        #sidebar .sidebar-header {
+            padding: 1.5rem;
+            text-align: center;
+            background: var(--primary-gradient);
+            color: #fff;
+        }
+
+        #sidebar .sidebar-header h3 {
+            margin: 0;
             font-weight: 700;
-            font-size: 1.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
-        .nav-link {
-            transition: all 0.3s ease;
+        #sidebar .list-unstyled {
+            padding: 1rem;
+        }
+
+        #sidebar .list-unstyled .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        #sidebar .list-unstyled a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #555;
+            font-weight: 500;
             border-radius: 8px;
-            margin: 0 4px;
+            transition: all 0.3s;
         }
 
-        .nav-link:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateY(-2px);
+        #sidebar .list-unstyled a:hover {
+            background: #f0f2f5;
+            color: #667eea;
+            text-decoration: none;
         }
 
-        .nav-link.active {
-            background: rgba(255,255,255,0.25);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        #sidebar .list-unstyled a.active {
+            background: var(--primary-gradient);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
 
-        /* Section Titles */
+        #sidebar .list-unstyled i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        #sidebar .nav-category {
+            padding: 0.5rem 1rem;
+            color: #999;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        #content {
+            flex-grow: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        
         .section-title {
             font-size: 1.25rem;
             font-weight: 700;
@@ -73,7 +113,6 @@
             border-radius: 2px;
         }
 
-        /* Stats Cards */
         .stats-card {
             border: none;
             border-radius: 16px;
@@ -115,7 +154,6 @@
             font-weight: 800;
         }
 
-        /* Cards */
         .card {
             border: none;
             border-radius: 16px;
@@ -130,232 +168,42 @@
             box-shadow: 0 8px 30px rgba(0,0,0,0.12);
             transform: translateY(-4px);
         }
-
-        .card-header {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
-            padding: 1rem 1.25rem;
-            font-weight: 600;
-        }
-
-        .card-header h5 {
-            margin: 0;
-            font-weight: 600;
-        }
-
-        /* Weibo Items */
-        .weibo-item {
-            transition: all 0.3s ease;
-            padding: 1rem 0 !important;
-        }
-
-        .weibo-item:hover {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-            border-radius: 12px;
-            padding: 1rem !important;
-            margin: 0 -0.75rem;
-        }
-
-        .weibo-item p {
-            line-height: 1.7;
-            color: #333;
-        }
-
-        .weibo-stats span {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
-            border-radius: 6px;
-            background: rgba(102, 126, 234, 0.08);
-            color: #667eea;
-            font-size: 0.8rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .weibo-stats span:hover {
-            background: rgba(102, 126, 234, 0.15);
-            transform: scale(1.05);
-        }
-
-        /* File Items */
-        .file-item {
-            transition: all 0.3s ease;
-            padding: 0.75rem 0 !important;
-            border-radius: 8px;
-        }
-
-        .file-item:hover {
-            background: linear-gradient(135deg, rgba(17, 153, 142, 0.05) 0%, rgba(56, 239, 125, 0.05) 100%);
-            padding: 0.75rem 0.75rem !important;
-            margin: 0 -0.75rem;
-        }
-
-        .file-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            background: rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-
-        .file-item:hover .file-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        /* GitHub Items */
-        .github-item {
-            transition: all 0.3s ease;
-            padding: 1rem 0 !important;
-        }
-
-        .github-item:hover {
-            background: linear-gradient(135deg, rgba(67, 67, 67, 0.05) 0%, rgba(0, 0, 0, 0.05) 100%);
-            border-radius: 12px;
-            padding: 1rem !important;
-            margin: 0 -0.75rem;
-        }
-
-        .github-item a {
-            color: #333;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .github-item a:hover {
-            color: #667eea;
-            text-decoration: underline !important;
-        }
-
-        /* Buttons */
-        .btn-outline-primary,
-        .btn-outline-dark {
-            border-radius: 8px;
-            font-weight: 500;
-            padding: 0.35rem 0.75rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-outline-primary:hover,
-        .btn-outline-dark:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        /* Empty State */
-        .empty-state {
-            padding: 3rem 1.5rem;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-            border-radius: 12px;
-            border: 2px dashed rgba(102, 126, 234, 0.3);
-        }
-
-        /* Footer */
-        .footer {
-            background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
-            color: rgba(255,255,255,0.8);
-            margin-top: auto;
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .card {
-            animation: fadeInUp 0.6s ease-out forwards;
-        }
-
-        .col-md-2:nth-child(1) .stats-card { animation-delay: 0.1s; }
-        .col-md-2:nth-child(2) .stats-card { animation-delay: 0.15s; }
-        .col-md-2:nth-child(3) .stats-card { animation-delay: 0.2s; }
-        .col-md-2:nth-child(4) .stats-card { animation-delay: 0.25s; }
-        .col-md-2:nth-child(5) .stats-card { animation-delay: 0.3s; }
-        .col-md-2:nth-child(6) .stats-card { animation-delay: 0.35s; }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .stats-card h2 {
-                font-size: 1.8rem;
-            }
-            .stats-card .display-4 {
-                font-size: 2rem;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-        <div class="container">
-            <a class="navbar-brand" th:href="@{/home}">
-                <i class="bi bi-house-heart-fill"></i> MyLife
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/home}">
-                            <i class="bi bi-speedometer2"></i> 首页
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/weibo}">
-                            <i class="bi bi-weibo"></i> 微博动态
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/resources}">
-                            <i class="bi bi-cloud"></i> 资源库
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/github}">
-                            <i class="bi bi-github"></i> GitHub
-                        </a>
-                    </li>
-                </ul>
-            </div>
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="bi bi-house-heart-fill"></i> MyLife</h3>
         </div>
-    </nav>
+        <ul class="list-unstyled components">
+             <li class="nav-item">
+                <a class="nav-link active" th:href="@{/home}">
+                    <i class="bi bi-speedometer2"></i> 首页
+                </a>
+            </li>
+            <li class="nav-category">个人动态</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/weibo}">
+                    <i class="bi bi-weibo"></i> 微博动态
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/github}">
+                    <i class="bi bi-github"></i> GitHub
+                </a>
+            </li>
+            <li class="nav-category">个人数据</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/resources}">
+                    <i class="bi bi-cloud"></i> 资源库
+                </a>
+            </li>
+        </ul>
+    </div>
 
-    <!-- Main Content -->
-    <main class="container my-5">
-        <!-- Page Header -->
-        <div class="row mb-4">
+    <div id="content">
+        <main class="container-fluid">
+             <div class="row mb-4">
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -466,143 +314,8 @@
                 </div>
             </div>
         </section>
-
-        <!-- Content Cards Section -->
-        <div class="row g-4">
-            <!-- Latest Weibo Posts -->
-            <div class="col-lg-4">
-                <div class="card h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
-                            <i class="bi bi-weibo text-primary"></i> 最新微博
-                        </h5>
-                        <a th:href="@{/weibo}" class="btn btn-sm btn-outline-primary">
-                            查看更多 <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <div th:if="${#lists.isEmpty(latestWeibos)}" class="empty-state">
-                            <i class="bi bi-inbox display-4 text-muted"></i>
-                            <p class="text-muted mt-3 mb-2">暂无微博数据</p>
-                            <a th:href="@{/weibo(sync=true)}" class="btn btn-primary btn-sm">
-                                <i class="bi bi-sync"></i> 立即同步
-                            </a>
-                        </div>
-                        <div th:unless="${#lists.isEmpty(latestWeibos)}">
-                            <div th:each="post : ${latestWeibos}" class="weibo-item border-bottom">
-                                <p class="mb-2 text-truncate" th:text="${post.content}"></p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">
-                                        <i class="bi bi-clock"></i>
-                                        <span th:text="${#temporals.format(post.createdAt, 'MM-dd HH:mm')}"></span>
-                                    </small>
-                                    <div class="weibo-stats">
-                                        <span><i class="bi bi-arrow-repeat"></i> <span th:text="${post.repostsCount}">0</span></span>
-                                        <span><i class="bi bi-chat"></i> <span th:text="${post.commentsCount}">0</span></span>
-                                        <span><i class="bi bi-hand-thumbs-up"></i> <span th:text="${post.attitudesCount}">0</span></span>
-                                    </div>
-                                </div>
-                                <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" class="img-thumbnail mt-2" style="max-height: 100px; object-fit: cover;" alt="weibo image">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Latest Files -->
-            <div class="col-lg-4">
-                <div class="card h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
-                            <i class="bi bi-cloud text-success"></i> 最新资源
-                        </h5>
-                        <a th:href="@{/resources}" class="btn btn-sm btn-outline-success">
-                            查看更多 <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <div th:if="${#lists.isEmpty(latestFiles)}" class="empty-state">
-                            <i class="bi bi-inbox display-4 text-muted"></i>
-                            <p class="text-muted mt-3 mb-2">暂无资源数据</p>
-                            <a th:href="@{/resources(sync=true)}" class="btn btn-success btn-sm">
-                                <i class="bi bi-sync"></i> 立即同步
-                            </a>
-                        </div>
-                        <div th:unless="${#lists.isEmpty(latestFiles)}">
-                            <div th:each="file : ${latestFiles}" class="file-item d-flex align-items-center border-bottom">
-                                <div class="file-icon me-3">
-                                    <i th:if="${file.fileType.name() == 'DOCUMENT'}" class="bi bi-file-earmark-text text-success fs-4"></i>
-                                    <i th:if="${file.fileType.name() == 'VIDEO'}" class="bi bi-camera-video text-warning fs-4"></i>
-                                    <i th:if="${file.fileType.name() == 'AUDIO'}" class="bi bi-music-note text-info fs-4"></i>
-                                    <i th:if="${file.fileType.name() == 'IMAGE'}" class="bi bi-image text-primary fs-4"></i>
-                                    <i th:if="${file.fileType.name() == 'OTHER' || file.fileType == null}" class="bi bi-file-earmark text-secondary fs-4"></i>
-                                </div>
-                                <div class="flex-grow-1 min-w-0">
-                                    <h6 class="mb-1 text-truncate" th:text="${file.fileName}"></h6>
-                                    <small class="text-muted">
-                                        <span th:text="${#temporals.format(file.modifiedTime, 'yyyy-MM-dd')}"></span>
-                                        <span th:if="${file.fileSize > 0}" class="ms-2" th:text="${#numbers.formatDecimal(file.fileSize / 1024.0 / 1024.0, 0, 2)} + ' MB'"></span>
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Latest GitHub Activities -->
-            <div class="col-lg-4">
-                <div class="card h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
-                            <i class="bi bi-github" style="color: #24292e;"></i> GitHub 动态
-                        </h5>
-                        <a th:href="@{/github}" class="btn btn-sm btn-outline-dark">
-                            查看更多 <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <div th:if="${#lists.isEmpty(latestActivities)}" class="empty-state">
-                            <i class="bi bi-inbox display-4 text-muted"></i>
-                            <p class="text-muted mt-3 mb-2">暂无 GitHub 数据</p>
-                            <a th:href="@{/github/sync}" class="btn btn-dark btn-sm">
-                                <i class="bi bi-sync"></i> 立即同步
-                            </a>
-                        </div>
-                        <div th:unless="${#lists.isEmpty(latestActivities)}">
-                            <div th:each="activity : ${latestActivities}" class="github-item border-bottom">
-                                <div class="d-flex align-items-start">
-                                    <div class="me-3">
-                                        <i class="bi bi-git fs-4" style="color: #24292e;"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1">
-                                            <a th:href="${activity.link}" target="_blank" class="text-decoration-none" th:text="${activity.title}"></a>
-                                        </h6>
-                                        <small class="text-muted">
-                                            <i class="bi bi-clock"></i>
-                                            <span th:text="${#temporals.format(activity.publishedAt, 'MM-dd HH:mm')}"></span>
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer py-4 mt-5">
-        <div class="container text-center">
-            <p class="mb-1">
-                <i class="bi bi-heart-fill text-danger"></i> Made with MyLife
-            </p>
-            <p class="mb-0 small">&copy; 2026 Personal Life Records</p>
-        </div>
-    </footer>
-
+        </main>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

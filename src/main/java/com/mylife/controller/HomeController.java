@@ -34,18 +34,6 @@ public class HomeController {
 
     @GetMapping
     public String home(Model model) {
-        // Get latest weibo posts
-        List<WeiboPost> latestWeibos = weiboService.getLatestPosts();
-        model.addAttribute("latestWeibos", latestWeibos);
-
-        // Get latest files
-        List<CloudFile> latestFiles = baiduPanService.getLatestFiles();
-        model.addAttribute("latestFiles", latestFiles);
-
-        // Get latest GitHub activities
-        List<GitHubActivity> latestActivities = gitHubService.getLatestActivities();
-        model.addAttribute("latestActivities", latestActivities);
-
         // Get statistics
         Map<String, Object> stats = new HashMap<>();
         stats.put("weiboCount", weiboService.getPostCount());
