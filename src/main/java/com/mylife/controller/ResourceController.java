@@ -40,49 +40,35 @@ public class ResourceController {
             baiduPanService.syncFiles(50);
         }
 
-        // Get file counts by type
         Map<FileType, Long> counts = baiduPanService.getFileCountByType();
         model.addAttribute("fileCounts", counts);
 
         List<CloudFile> files;
-        String currentType = type;
-
         if ("all".equals(type)) {
             files = baiduPanService.getLatestFiles();
-            currentType = "all";
         } else if ("document".equals(type)) {
             files = baiduPanService.getDocuments();
-            currentType = "document";
         } else if ("video".equals(type)) {
             files = baiduPanService.getVideos();
-            currentType = "video";
         } else if ("audio".equals(type)) {
             files = baiduPanService.getAudios();
-            currentType = "audio";
         } else if ("image".equals(type)) {
             files = baiduPanService.getImages();
-            currentType = "image";
         } else {
             files = baiduPanService.getLatestFiles();
-            currentType = "all";
         }
 
         model.addAttribute("files", files);
-        model.addAttribute("currentType", currentType);
+        model.addAttribute("currentType", type);
 
         return "resources";
     }
 
-    @GetMapping("/sync")
-    public String sync() {
-        baiduPanService.syncFiles(50);
-        return "redirect:/resources";
-    }
-
-    @GetMapping("/api/file")
+    @GetMapping("/api/file/{fileId}/direct-url")
     @ResponseBody
-    public CloudFile getFile(@RequestParam String fileId) {
-        return baiduPanService.getFileById(fileId);
+    public Map<String, String> getFileDirectUrl(@PathVariable String fileId) {
+        String downloadUrl = baiduPanService.getFileDownloadUrl(fileId);
+        return Map.of("url", downloadUrl);
     }
 
     @GetMapping("/api/file/{fileId}/download")
@@ -96,12 +82,15 @@ public class ResourceController {
                     InputStreamResource resource = new InputStreamResource(url.openStream());
 
                     HttpHeaders headers = new HttpHeaders();
-                    headers.setContentDispositionFormData("attachment", file.getFileName());
-                    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+                    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"");
+                    headers.add(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
+                    headers.add(HttpHeaders.PRAGMA, "no-cache");
+                    headers.add(HttpHeaders.EXPIRES, "0");
 
                     return ResponseEntity.ok()
                         .headers(headers)
                         .contentLength(file.getFileSize())
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
                         .body(resource);
                 }
             }
@@ -122,8 +111,6 @@ public class ResourceController {
                     InputStreamResource resource = new InputStreamResource(url.openStream());
 
                     HttpHeaders headers = new HttpHeaders();
-                    headers.setCacheControl("no-cache");
-
                     MediaType mediaType = getMediaType(file.getExtension());
                     headers.setContentType(mediaType);
 
@@ -148,8 +135,11 @@ public class ResourceController {
             case "webp" -> MediaType.valueOf("image/webp");
             case "mp4" -> MediaType.valueOf("video/mp4");
             case "webm" -> MediaType.valueOf("video/webm");
+            case "ogg" -> MediaType.valueOf("video/ogg");
+            case "mp3" -> MediaType.valueOf("audio/mpeg");
+            case "wav" -> MediaType.valueOf("audio/wav");
             case "pdf" -> MediaType.APPLICATION_PDF;
-            case "txt", "md" -> MediaType.TEXT_PLAIN;
+            case "txt", "md", "log", "csv", "java", "js", "py", "go", "rs", "c", "cpp", "h", "html", "css", "json", "xml", "yaml" -> MediaType.TEXT_PLAIN;
             default -> MediaType.APPLICATION_OCTET_STREAM;
         };
     }

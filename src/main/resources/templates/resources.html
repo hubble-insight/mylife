@@ -226,8 +226,8 @@
 
                 <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4" th:unless="${#lists.isEmpty(files)}">
                     <div class="col" th:each="file : ${files}">
-                        <div class="card h-100 card-file"
-                             th:attr="data-file-id=${file.fileId}, data-file-url=${file.downloadUrl}, data-file-name=${file.fileName}, data-file-type=${file.extension}, data-file-category=${file.fileType.name()}"
+                         <div class="card h-100 card-file"
+                             th:attr="data-file-id=${file.fileId}, data-file-name=${file.fileName}, data-file-type=${file.extension}, data-file-category=${file.fileType.name()}"
                              onclick="openFileModal(this)">
 
                             <div class="card-img-top-container">
@@ -263,136 +263,139 @@
 
     <!-- Modals -->
     <!-- Image Modal -->
-    <div class="modal fade" id="imageModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="imageModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center p-0" style="background: #000;"><img id="imageModalImg" src="" class="img-fluid" style="max-height: 90vh;"></div></div></div></div>
-    <!-- Video Modal -->
-    <div class="modal fade" id="videoModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="videoModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal" onclick="stopVideo()"></button></div><div class="modal-body p-0" style="background: #000;"><video id="videoPlayer" controls style="width: 100%; max-height: 90vh;"><source id="videoSource" src="" type=""></video></div></div></div></div>
-    <!-- Audio Modal -->
-    <div class="modal fade" id="audioModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="audioModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal" onclick="stopAudio()"></button></div><div class="modal-body p-4"><audio id="audioPlayer" controls class="w-100"><source id="audioSource" src="" type=""></audio></div></div></div></div>
-    <!-- Document Modal -->
-    <div class="modal fade" id="documentModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content" style="height: 95vh;"><div class="modal-header"><h5 class="modal-title" id="documentModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body flex-grow-1" style="overflow-y: auto;"><div id="documentContent" class="h-100"></div></div><div class="modal-footer"><a id="documentDownload" href="#" class="btn btn-primary" download><i class="bi bi-download"></i> 下载</a><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button></div></div></div></div>
+<div class="modal fade" id="imageModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="imageModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center p-0" style="background: #000;"><img id="imageModalImg" src="" class="img-fluid" style="max-height: 90vh;"></div></div></div></div>
+<!-- Video Modal -->
+<div class="modal fade" id="videoModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="videoModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal" onclick="stopVideo()"></button></div><div class="modal-body p-0" style="background: #000;"><video id="videoPlayer" controls style="width: 100%; max-height: 90vh;"><source id="videoSource" src="" type=""></video></div></div></div></div>
+<!-- Audio Modal -->
+<div class="modal fade" id="audioModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="audioModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal" onclick="stopAudio()"></button></div><div class="modal-body p-4"><audio id="audioPlayer" controls class="w-100"><source id="audioSource" src="" type=""></audio></div></div></div></div>
+<!-- Document Modal -->
+<div class="modal fade" id="documentModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content" style="height: 95vh;"><div class="modal-header"><h5 class="modal-title" id="documentModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body flex-grow-1" style="overflow-y: auto;"><div id="documentContent" class="h-100"></div></div><div class="modal-footer"><a id="documentDownload" href="#" class="btn btn-primary" download><i class="bi bi-download"></i> 下载</a><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button></div></div></div></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        let imageModal, videoModal, documentModal, audioModal;
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let imageModal, videoModal, documentModal, audioModal;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
-            videoModal = new bootstrap.Modal(document.getElementById('videoModal'));
-            documentModal = new bootstrap.Modal(document.getElementById('documentModal'));
-            audioModal = new bootstrap.Modal(document.getElementById('audioModal'));
-        });
+    document.addEventListener('DOMContentLoaded', function () {
+        imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+        videoModal = new bootstrap.Modal(document.getElementById('videoModal'));
+        documentModal = new bootstrap.Modal(document.getElementById('documentModal'));
+        audioModal = new bootstrap.Modal(document.getElementById('audioModal'));
+    });
 
-        function openFileModal(element) {
-            const category = element.getAttribute('data-file-category');
-            if (category === 'IMAGE') {
-                openImageModal(element);
-            } else if (category === 'VIDEO') {
-                openVideoModal(element);
-            } else if (category === 'AUDIO') {
-                openAudioModal(element);
-            } else { // DOCUMENT or OTHER
-                openDocumentModal(element);
+    function openFileModal(element) {
+        const category = element.getAttribute('data-file-category');
+        const fileId = element.getAttribute('data-file-id');
+        const fileName = element.getAttribute('data-file-name');
+        const fileType = element.getAttribute('data-file-type');
+
+        if (category === 'IMAGE') {
+            openImageModal(fileId, fileName);
+        } else if (category === 'VIDEO') {
+            openVideoModal(fileId, fileName, fileType);
+        } else if (category === 'AUDIO') {
+            openAudioModal(fileId, fileName, fileType);
+        } else { // DOCUMENT or OTHER
+            openDocumentModal(fileId, fileName, fileType);
+        }
+    }
+
+    function openImageModal(fileId, fileName) {
+        document.getElementById('imageModalTitle').textContent = fileName;
+        document.getElementById('imageModalImg').src = `/resources/api/file/${fileId}/view`;
+        imageModal.show();
+    }
+
+    function openVideoModal(fileId, fileName, fileType) {
+        document.getElementById('videoModalTitle').textContent = fileName;
+        const videoPlayer = document.getElementById('videoPlayer');
+        const videoSource = document.getElementById('videoSource');
+        videoSource.src = `/resources/api/file/${fileId}/view`;
+        videoSource.type = getVideoType(fileType);
+        videoPlayer.load();
+        videoModal.show();
+    }
+
+    function openAudioModal(fileId, fileName, fileType) {
+        document.getElementById('audioModalTitle').textContent = fileName;
+        const audioPlayer = document.getElementById('audioPlayer');
+        const audioSource = document.getElementById('audioSource');
+        audioSource.src = `/resources/api/file/${fileId}/view`;
+        audioSource.type = getAudioType(fileType);
+        audioPlayer.load();
+        audioModal.show();
+    }
+
+    async function openDocumentModal(fileId, fileName, fileType) {
+        document.getElementById('documentModalTitle').textContent = fileName;
+        document.getElementById('documentDownload').href = `/resources/api/file/${fileId}/download`;
+        
+        const docContent = document.getElementById('documentContent');
+        const fileExtension = fileType.toLowerCase();
+
+        const officeTypes = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'];
+        const textTypes = ['md', 'txt', 'log', 'csv', 'java', 'js', 'py', 'go', 'rs', 'c', 'cpp', 'h', 'html', 'css', 'json', 'xml', 'yaml'];
+        const viewUrl = `/resources/api/file/${fileId}/view`;
+
+        docContent.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>';
+        documentModal.show();
+
+        if (fileExtension === 'pdf') {
+            docContent.innerHTML = `<iframe src="${viewUrl}" style="border:0; width:100%; height:100%;"></iframe>`;
+        } else if (officeTypes.includes(fileExtension)) {
+            try {
+                const response = await fetch(`/resources/api/file/${fileId}/direct-url`);
+                const data = await response.json();
+                if (data.url) {
+                    const encodedUrl = encodeURIComponent(data.url);
+                    docContent.innerHTML = `<iframe src="https://view.xdocin.com/view?src=${encodedUrl}" style="border:0; width:100%; height:100%;" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>`;
+                } else {
+                     throw new Error('无法获取文件直链');
+                }
+            } catch (err) {
+                console.error('获取Office文件预览链接失败:', err);
+                docContent.innerHTML = `<div class="alert alert-danger">加载预览失败，请稍后重试或直接下载。</div>`;
             }
+        } else if (textTypes.includes(fileExtension)) {
+            loadTextContent(viewUrl, docContent);
+        } else {
+            docContent.innerHTML = `<div class="alert alert-light text-center mt-5"><i class="bi bi-exclamation-circle h1"></i><p class="mt-3">该文件类型暂不支持在线预览，请下载后查看。</p></div>`;
         }
+    }
 
-        function openImageModal(element) {
-            const fileUrl = element.getAttribute('data-file-url');
-            const fileName = element.getAttribute('data-file-name');
-            document.getElementById('imageModalTitle').textContent = fileName;
-            document.getElementById('imageModalImg').src = fileUrl;
-            imageModal.show();
-        }
+    function stopVideo() {
+        const videoPlayer = document.getElementById('videoPlayer');
+        videoPlayer.pause();
+        videoPlayer.src = '';
+    }
 
-        function openVideoModal(element) {
-            const fileUrl = element.getAttribute('data-file-url');
-            const fileName = element.getAttribute('data-file-name');
-            const fileType = element.getAttribute('data-file-type');
+    function stopAudio() {
+        const audioPlayer = document.getElementById('audioPlayer');
+        audioPlayer.pause();
+        audioPlayer.src = '';
+    }
 
-            document.getElementById('videoModalTitle').textContent = fileName;
-            const videoPlayer = document.getElementById('videoPlayer');
-            const videoSource = document.getElementById('videoSource');
-            videoSource.src = fileUrl;
-            videoSource.type = getVideoType(fileType);
-            videoPlayer.load();
-            videoModal.show();
-        }
-        
-        function openAudioModal(element) {
-            const fileUrl = element.getAttribute('data-file-url');
-            const fileName = element.getAttribute('data-file-name');
-            const fileType = element.getAttribute('data-file-type');
+    function getVideoType(ext) {
+        const types = {'mp4': 'video/mp4', 'webm': 'video/webm', 'ogg': 'video/ogg'};
+        return types[ext.toLowerCase()] || 'video/mp4';
+    }
 
-            document.getElementById('audioModalTitle').textContent = fileName;
-            const audioPlayer = document.getElementById('audioPlayer');
-            const audioSource = document.getElementById('audioSource');
-            audioSource.src = fileUrl;
-            audioSource.type = getAudioType(fileType);
-            audioPlayer.load();
-            audioModal.show();
-        }
-        
-        function openDocumentModal(element) {
-            const fileUrl = element.getAttribute('data-file-url');
-            const fileName = element.getAttribute('data-file-name');
-            const fileType = element.getAttribute('data-file-type');
+    function getAudioType(ext) {
+        const types = {'mp3': 'audio/mpeg', 'wav': 'audio/wav', 'ogg': 'audio/ogg'};
+        return types[ext.toLowerCase()] || 'audio/mpeg';
+    }
 
-            document.getElementById('documentModalTitle').textContent = fileName;
-            document.getElementById('documentDownload').href = fileUrl;
-            
-            const docContent = document.getElementById('documentContent');
-            const fileExtension = fileType.toLowerCase();
-            
-            const officeTypes = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'];
-            const textTypes = ['md', 'txt', 'log', 'csv', 'java', 'js', 'py', 'go', 'rs', 'c', 'cpp', 'h', 'html', 'css', 'json', 'xml', 'yaml'];
-
-            if (fileExtension === 'pdf') {
-                docContent.innerHTML = `<iframe src="${fileUrl}" style="border:0; width:100%; height:100%;"></iframe>`;
-            } else if (officeTypes.includes(fileExtension)) {
-                const encodedUrl = encodeURIComponent(fileUrl);
-                docContent.innerHTML = `<iframe src="https://view.xdocin.com/view?src=${encodedUrl}" style="border:0; width:100%; height:100%;" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>`;
-            } else if (textTypes.includes(fileExtension)) {
-                loadTextContent(fileUrl, docContent);
-            } else {
-                docContent.innerHTML = `<div class="alert alert-light text-center mt-5"><i class="bi bi-exclamation-circle h1"></i><p class="mt-3">该文件类型暂不支持在线预览，请下载后查看。</p></div>`;
-            }
-            documentModal.show();
-        }
-
-        function stopVideo() {
-            const videoPlayer = document.getElementById('videoPlayer');
-            videoPlayer.pause();
-            videoPlayer.src = '';
-        }
-        
-        function stopAudio() {
-            const audioPlayer = document.getElementById('audioPlayer');
-            audioPlayer.pause();
-            audioPlayer.src = '';
-        }
-        
-        function getVideoType(ext) {
-            const types = {'mp4': 'video/mp4', 'webm': 'video/webm', 'ogg': 'video/ogg'};
-            return types[ext.toLowerCase()] || 'video/mp4';
-        }
-        
-        function getAudioType(ext) {
-            const types = {'mp3': 'audio/mpeg', 'wav': 'audio/wav', 'ogg': 'audio/ogg'};
-            return types[ext.toLowerCase()] || 'audio/mpeg';
-        }
-
-        function loadTextContent(url, container) {
-            container.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>';
-            fetch(url)
-                .then(response => response.text())
-                .then(text => {
-                    const escapedText = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                    container.innerHTML = `<pre style="white-space: pre-wrap; word-break: break-all; height: 100%;">${escapedText}</pre>`;
-                })
-                .catch(err => {
-                    console.error('加载文本失败:', err);
-                    container.innerHTML = '<div class="alert alert-warning">加载文件内容失败。</div>';
-                });
-        }
-    </script>
+    function loadTextContent(url, container) {
+        fetch(url)
+            .then(response => response.text())
+            .then(text => {
+                const escapedText = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                container.innerHTML = `<pre style="white-space: pre-wrap; word-break: break-all; height: 100%;">${escapedText}</pre>`;
+            })
+            .catch(err => {
+                console.error('加载文本失败:', err);
+                container.innerHTML = '<div class="alert alert-warning">加载文件内容失败。</div>';
+            });
+    }
+</script>
 </body>
 </html>
