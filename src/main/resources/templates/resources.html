@@ -22,7 +22,6 @@
             width: 280px;
             background: #fff;
             box-shadow: 0 0 30px rgba(0,0,0,0.05);
-            transition: all 0.3s;
         }
 
         #sidebar .sidebar-header {
@@ -184,16 +183,15 @@
     <div id="content">
         <main class="container-fluid">
             <div class="row">
-            <!-- Sidebar -->
-            <aside class="col-lg-3">
-                <div class="sticky-top" style="top: 2rem;">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="mb-0">分类</h4>
-                        <a th:href="@{/resources(sync=true)}" class="btn btn-sm btn-outline-primary" title="同步资源">
-                            <i class="bi bi-arrow-repeat"></i> 同步
-                        </a>
-                    </div>
-                    <div class="list-group shadow-sm">
+                <aside class="col-lg-3">
+                    <div class="sticky-top" style="top: 2rem;">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="mb-0">分类</h4>
+                            <a th:href="@{/resources(sync=true)}" class="btn btn-sm btn-outline-primary" title="同步资源">
+                                <i class="bi bi-arrow-repeat"></i> 同步
+                            </a>
+                        </div>
+                        <div class="list-group shadow-sm">
                         <a th:href="@{/resources(type='all')}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" th:classappend="${currentType == 'all'} ? 'active'">
                             <div><i class="bi bi-grid-fill me-2"></i>全部</div>
                             <span class="badge" th:classappend="${currentType == 'all'} ? 'bg-light text-primary' : 'bg-secondary'" th:text="${fileCounts.get(T(com.mylife.model.FileType).DOCUMENT) + fileCounts.get(T(com.mylife.model.FileType).VIDEO) + fileCounts.get(T(com.mylife.model.FileType).AUDIO) + fileCounts.get(T(com.mylife.model.FileType).IMAGE)}"></span>
@@ -215,8 +213,8 @@
                             <span class="badge" th:classappend="${currentType == 'document'} ? 'bg-light text-primary' : 'bg-success'" th:text="${fileCounts.get(T(com.mylife.model.FileType).DOCUMENT)}"></span>
                         </a>
                     </div>
-                </div>
-            </aside>
+                    </div>
+                </aside>
 
             <!-- Files Grid -->
             <section class="col-lg-9">

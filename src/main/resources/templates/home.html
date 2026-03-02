@@ -9,12 +9,8 @@
     <link th:href="@{/css/style.css}" rel="stylesheet">
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --dark-gradient: linear-gradient(135deg, #434343 0%, #000000 100%);
-            --secondary-gradient: linear-gradient(135deg, #868f96 0%, #596164 100%);
+            --primary-color: #4a89dc;
+            --primary-gradient: linear-gradient(135deg, #4a89dc 0%, #3e74c8 100%);
         }
 
         body {
@@ -27,7 +23,6 @@
             width: 280px;
             background: #fff;
             box-shadow: 0 0 30px rgba(0,0,0,0.05);
-            transition: all 0.3s;
         }
 
         #sidebar .sidebar-header {
@@ -62,14 +57,14 @@
 
         #sidebar .list-unstyled a:hover {
             background: #f0f2f5;
-            color: #667eea;
+            color: var(--primary-color);
             text-decoration: none;
         }
 
         #sidebar .list-unstyled a.active {
             background: var(--primary-gradient);
             color: #fff;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 15px rgba(74, 137, 220, 0.4);
         }
 
         #sidebar .list-unstyled i {
@@ -95,10 +90,7 @@
         .section-title {
             font-size: 1.25rem;
             font-weight: 700;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--primary-color);
             margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
@@ -114,59 +106,37 @@
         }
 
         .stats-card {
-            border: none;
-            border-radius: 16px;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        .stats-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
-            pointer-events: none;
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            transition: all 0.3s ease;
         }
 
         .stats-card:hover {
-            transform: translateY(-8px) scale(1.05);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
         }
 
         .stats-card .card-body {
             padding: 1.5rem;
         }
 
-        .stats-card h6 {
-            font-size: 0.85rem;
-            opacity: 0.9;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .stats-card .card-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #6c757d;
         }
 
-        .stats-card h2 {
+        .stats-card .card-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stats-card .card-icon {
             font-size: 2.5rem;
-            font-weight: 800;
-        }
-
-        .card {
-            border: none;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-        }
-
-        .card:hover {
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-            transform: translateY(-4px);
+            color: var(--primary-color);
+            opacity: 0.8;
         }
     </style>
 </head>
@@ -207,7 +177,7 @@
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h1 class="display-6 fw-bold mb-1" style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                            <h1 class="display-6 fw-bold mb-1" style="color: var(--primary-color)">
                                 欢迎回来
                             </h1>
                             <p class="text-muted mb-0">
@@ -224,30 +194,26 @@
                 <div class="col-lg-6">
                     <section class="mb-5">
                         <h2 class="section-title">个人动态</h2>
-                        <div class="row g-3">
+                        <div class="row g-4">
                             <div class="col-6">
-                                <div class="stats-card" style="background: var(--primary-gradient);">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <h6 class="card-subtitle mb-2">微博动态</h6>
-                                                <h2 class="mb-0" th:text="${stats.weiboCount}">0</h2>
-                                            </div>
-                                            <i class="bi bi-weibo display-4" style="opacity: 0.3;"></i>
+                                <div class="card stats-card">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title mb-1">微博动态</h6>
+                                            <p class="card-text mb-0" th:text="${stats.weiboCount}">0</p>
                                         </div>
+                                        <i class="bi bi-weibo card-icon"></i>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-6">
-                                <div class="stats-card" style="background: var(--dark-gradient);">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <h6 class="card-subtitle mb-2">GitHub</h6>
-                                                <h2 class="mb-0" th:text="${stats.githubCount}">0</h2>
-                                            </div>
-                                            <i class="bi bi-github display-4" style="opacity: 0.3;"></i>
+                                <div class="card stats-card">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title mb-1">GitHub</h6>
+                                            <p class="card-text mb-0" th:text="${stats.githubCount}">0</p>
                                         </div>
+                                        <i class="bi bi-github card-icon"></i>
                                     </div>
                                 </div>
                             </div>
@@ -257,56 +223,48 @@
                 <div class="col-lg-6">
                     <section class="mb-5">
                         <h2 class="section-title">个人数据</h2>
-                        <div class="row g-3">
+                        <div class="row g-4">
                              <div class="col-6">
-                                <div class="stats-card" style="background: var(--secondary-gradient);">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <h6 class="card-subtitle mb-2">总文件</h6>
-                                                <h2 class="mb-0" th:text="${stats.totalFiles}">0</h2>
-                                            </div>
-                                            <i class="bi bi-files display-4" style="opacity: 0.3;"></i>
+                                <div class="card stats-card">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title mb-1">总文件</h6>
+                                            <p class="card-text mb-0" th:text="${stats.totalFiles}">0</p>
                                         </div>
+                                        <i class="bi bi-files card-icon"></i>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-6">
-                                <div class="stats-card" style="background: var(--success-gradient);">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <h6 class="card-subtitle mb-2">文档</h6>
-                                                <h2 class="mb-0" th:text="${stats.documentCount}">0</h2>
-                                            </div>
-                                            <i class="bi bi-file-earmark-text display-4" style="opacity: 0.3;"></i>
+                                <div class="card stats-card">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title mb-1">文档</h6>
+                                            <p class="card-text mb-0" th:text="${stats.documentCount}">0</p>
                                         </div>
+                                        <i class="bi bi-file-earmark-text card-icon"></i>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-6">
-                                <div class="stats-card" style="background: var(--warning-gradient);">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <h6 class="card-subtitle mb-2">视频</h6>
-                                                <h2 class="mb-0" th:text="${stats.videoCount}">0</h2>
-                                            </div>
-                                            <i class="bi bi-camera-video display-4" style="opacity: 0.3;"></i>
+                                <div class="card stats-card">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title mb-1">视频</h6>
+                                            <p class="card-text mb-0" th:text="${stats.videoCount}">0</p>
                                         </div>
+                                        <i class="bi bi-camera-video card-icon"></i>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-6">
-                                <div class="stats-card" style="background: var(--info-gradient);">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <h6 class="card-subtitle mb-2">音频</h6>
-                                                <h2 class="mb-0" th:text="${stats.audioCount}">0</h2>
-                                            </div>
-                                            <i class="bi bi-music-note-beamed display-4" style="opacity: 0.3;"></i>
+                                <div class="card stats-card">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title mb-1">音频</h6>
+                                            <p class="card-text mb-0" th:text="${stats.audioCount}">0</p>
                                         </div>
+                                        <i class="bi bi-music-note-beamed card-icon"></i>
                                     </div>
                                 </div>
                             </div>
