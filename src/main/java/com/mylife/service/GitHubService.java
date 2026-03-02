@@ -4,6 +4,7 @@ import com.mylife.client.GitHubClient;
 import com.mylife.model.GitHubActivity;
 import com.mylife.repository.GitHubActivityRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,8 +29,9 @@ public class GitHubService {
     }
 
     @Transactional
+    @CacheEvict(value = "github-activities", allEntries = true)
     public List<GitHubActivity> syncActivities() {
-        log.info("Syncing GitHub activities...");
+        log.info("Syncing GitHub activities and evicting cache...");
         List<GitHubActivity> activities = gitHubClient.getPublicActivity();
 
         if (!activities.isEmpty()) {
