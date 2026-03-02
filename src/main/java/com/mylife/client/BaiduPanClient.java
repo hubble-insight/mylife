@@ -241,13 +241,7 @@ public class BaiduPanClient {
                 if (responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
                     String downloadUrl = conn.getHeaderField("Location");
                     log.info("Got redirect to actual download URL: {}", downloadUrl);
-                    if (downloadUrl != null) {
-                        // The real download url may also require the same User-Agent, 
-                        // but we can't control what the browser sends.
-                        // However, returning the final URL is the correct approach.
-                        // The https to http replacement is a common workaround for CDN issues.
-                        return downloadUrl.replace("https://", "http://");
-                    }
+                    return downloadUrl;
                 } else {
                     log.error("Failed to get download URL. Response code: {}, Response message: {}",
                               responseCode, conn.getResponseMessage());
