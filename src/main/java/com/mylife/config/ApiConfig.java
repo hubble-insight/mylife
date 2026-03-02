@@ -18,12 +18,14 @@ public class ApiConfig {
      */
     private BaiduPan baiduPan = new BaiduPan();
 
+    /**
+     * GitHub Configuration
+     */
+    private GitHub github = new GitHub();
+
     @Data
     public static class Weibo {
-        private String appId;
-        private String appSecret;
-        private String accessToken;
-        private String userId;
+        private String rssUrl;
     }
 
     @Data
@@ -37,8 +39,15 @@ public class ApiConfig {
         private String rootDir = "/";
     }
 
+    @Data
+    public static class GitHub {
+        private String username;
+    }
+
     public Weibo getWeibo() { return weibo; }
     public void setWeibo(Weibo weibo) { this.weibo = weibo; }
     public BaiduPan getBaiduPan() { return baiduPan; }
     public void setBaiduPan(BaiduPan baiduPan) { this.baiduPan = baiduPan; }
+    public GitHub getGithub() { return github; }
+    public void setGithub(GitHub github) { this.github = github; }
 }

@@ -5,22 +5,23 @@ import com.google.gson.JsonObject;
 import com.mylife.config.ApiConfig;
 import com.mylife.model.WeiboPost;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.format.DateTimeFormatter;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.*;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 @Slf4j
 @Component
 public class WeiboClient {
 
-    private static final String BASE_URL = "https://api.weibo.com/2";
     private static final Gson GSON = new Gson();
 
     private final RestTemplate restTemplate;
@@ -32,90 +33,78 @@ public class WeiboClient {
     }
 
     /**
-     * Get user's recent weibo posts
+     * Get user's recent weibo posts from RSSHub
      */
     public List<WeiboPost> getUserTimeline(int count) {
-        String accessToken = apiConfig.getWeibo().getAccessToken();
-        String userId = apiConfig.getWeibo().getUserId();
+        String rssUrl = apiConfig.getWeibo().getRssUrl();
 
-        if (accessToken == null || userId == null) {
-            log.warn("Weibo API credentials not configured");
+        if (rssUrl == null || rssUrl.isEmpty()) {
+            log.warn("Weibo RSS URL not configured");
             return Collections.emptyList();
         }
 
-        try {
-            String url = UriComponentsBuilder.fromHttpUrl(BASE_URL + "/statuses/user_timeline.json")
-                .queryParam("access_token", accessToken)
-                .queryParam("uid", userId)
-                .queryParam("count", count)
-                .toUriString();
+        // Append .json to get JSON format
+        if (!rssUrl.endsWith(".json")) {
+            rssUrl += ".json";
+        }
 
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        try {
+            ResponseEntity<String> response = restTemplate.getForEntity(rssUrl, String.class);
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 JsonObject json = GSON.fromJson(response.getBody(), JsonObject.class);
-                return parseWeiboPosts(json.getAsJsonArray("statuses"));
+                return parseRssItems(json.getAsJsonArray("items"));
             }
         } catch (Exception e) {
-            log.error("Error fetching weibo timeline: {}", e.getMessage());
+            log.error("Error fetching Weibo RSS feed: {}", e.getMessage());
         }
 
         return Collections.emptyList();
     }
 
-    private List<WeiboPost> parseWeiboPosts(com.google.gson.JsonArray statuses) {
+    private List<WeiboPost> parseRssItems(com.google.gson.JsonArray items) {
         List<WeiboPost> posts = new ArrayList<>();
 
-        for (int i = 0; i < statuses.size(); i++) {
+        for (int i = 0; i < items.size(); i++) {
             try {
-                JsonObject status = statuses.get(i).getAsJsonObject();
+                JsonObject item = items.get(i).getAsJsonObject();
                 WeiboPost post = new WeiboPost();
 
-                post.setWeiboId(status.get("idstr").getAsString());
-                post.setContent(status.get("text").getAsString());
+                post.setWeiboId(item.get("id").getAsString());
+                post.setContent(item.get("content_html").getAsString());
 
-                // Parse created time (Wed Oct 10 20:22:58 +0800 2018)
-                String createdAtStr = status.get("created_at").getAsString();
-                post.setCreatedAt(parseWeiboDate(createdAtStr));
+                // Parse date_published (ISO 8601 format)
+                String createdAtStr = item.get("date_published").getAsString();
+                post.setCreatedAt(parseIsoDate(createdAtStr));
 
-                post.setSource(status.has("source") ? status.get("source").getAsString() : null);
+                post.setSource(item.has("source") ? item.get("source").getAsJsonObject().get("name").getAsString() : "RSSHub");
 
-                // Get thumbnail or original image
-                if (status.has("pic_urls") && status.getAsJsonArray("pic_urls").size() > 0) {
-                    String thumbnailUrl = status.getAsJsonArray("pic_urls").get(0).getAsJsonObject()
-                        .get("thumbnail_pic").getAsString();
-                    post.setThumbnailUrl(thumbnailUrl);
-
-                    String originalUrl = status.getAsJsonArray("pic_urls").get(0).getAsJsonObject()
-                        .get("original_pic").getAsString();
-                    post.setOriginalUrl(originalUrl);
+                if (item.has("attachments") && item.getAsJsonArray("attachments").size() > 0) {
+                    String imageUrl = item.getAsJsonArray("attachments").get(0).getAsJsonObject()
+                        .get("url").getAsString();
+                    post.setThumbnailUrl(imageUrl);
+                    post.setOriginalUrl(imageUrl);
                 }
-
-                post.setRepostsCount(status.has("reposts_count") ? status.get("reposts_count").getAsInt() : 0);
-                post.setCommentsCount(status.has("comments_count") ? status.get("comments_count").getAsInt() : 0);
-                post.setAttitudesCount(status.has("attitudes_count") ? status.get("attitudes_count").getAsInt() : 0);
 
                 post.setSyncedAt(LocalDateTime.now());
 
+                // RSS feed does not provide counts for reposts, comments, attitudes
+                post.setRepostsCount(0);
+                post.setCommentsCount(0);
+                post.setAttitudesCount(0);
+
                 posts.add(post);
             } catch (Exception e) {
-                log.warn("Error parsing weibo post: {}", e.getMessage());
+                log.warn("Error parsing Weibo RSS item: {}", e.getMessage());
             }
         }
 
         return posts;
     }
 
-    /**
-     * Parse Weibo date string format: "Wed Oct 10 20:22:58 +0800 2018"
-     */
-    private LocalDateTime parseWeiboDate(String dateStr) {
+    private LocalDateTime parseIsoDate(String dateStr) {
         try {
-            // Weibo date format: EEE MMM dd HH:mm:ss Z yyyy
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
-                "EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH);
-            Instant instant = Instant.from(formatter.parse(dateStr));
-            return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+            return ZonedDateTime.parse(dateStr, DateTimeFormatter.ISO_DATE_TIME).toLocalDateTime();
         } catch (Exception e) {
             log.warn("Failed to parse date: {}, using current time", dateStr);
             return LocalDateTime.now();

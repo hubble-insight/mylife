@@ -36,13 +36,15 @@ server:
 
 # API Configuration
 api:
-  # Weibo API Configuration
-  # Get these from https://open.weibo.com/
+  # Weibo Configuration (using RSSHub)
   weibo:
-    app-id: ${WEIBO_APP_ID:}
-    app-secret: ${WEIBO_APP_SECRET:}
-    access-token: ${WEIBO_ACCESS_TOKEN:}
-    user-id: ${WEIBO_USER_ID:}
+    # Get your UID from your Weibo main page URL (e.g., https://weibo.com/u/12345678)
+    # Then construct the RSSHub URL like this:
+    rss-url: ${WEIBO_RSS_URL:https://rsshub.app/weibo/user/YOUR_UID}
+
+  # GitHub Configuration
+  github:
+    username: ${GITHUB_USERNAME:YOUR_USERNAME}
 
   # Baidu Pan API Configuration
   # Get these from https://pan.baidu.com/union

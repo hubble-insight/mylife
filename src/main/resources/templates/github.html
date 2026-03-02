@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GitHub Activities</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+</head>
+<body>
+
+<div class="ui container">
+    <div class="ui top attached menu">
+        <a class="item" th:href="@{/}">Home</a>
+        <a class="item" th:href="@{/weibo}">Weibo</a>
+        <a class="active item" th:href="@{/github}">GitHub</a>
+        <a class="item" th:href="@{/dashboard}">Dashboard</a>
+    </div>
+
+    <div class="ui attached segment">
+        <h2 class="ui header">My GitHub Activities</h2>
+
+        <div class="ui feed">
+            <div class="event" th:each="activity : ${activities}">
+                <div class="content">
+                    <div class="summary">
+                        <i class="icon code"></i>
+                        <a th:href="${activity.link}" th:text="${activity.title}" target="_blank"></a>
+                        <div class="date" th:text="${#temporals.format(activity.publishedAt, 'yyyy-MM-dd HH:mm')}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui divider"></div>
+
+        <a class="ui button" th:href="@{/github/sync}">Sync Now</a>
+    </div>
+</div>
+
+</body>
+</html>

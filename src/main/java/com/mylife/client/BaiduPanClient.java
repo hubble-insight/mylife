@@ -195,7 +195,7 @@ public class BaiduPanClient {
     }
 
     /**
-     * Get file download URL
+     * Get file download URL by making a request and getting the redirect URL.
      * @param fileId File ID
      * @return Download URL or null
      */
@@ -212,20 +212,64 @@ public class BaiduPanClient {
             return null;
         }
 
+        HttpURLConnection conn = null;
         try {
             // First get file path
             Optional<CloudFile> fileInfo = getFileMetadata(fileId);
             if (fileInfo.isPresent()) {
                 String path = fileInfo.get().getFilePath();
-                // Build download URL
-                String downloadUrl = FILE_DOWNLOAD_URL + "?method=download"
+                // Build download API URL
+                String apiUrl = FILE_DOWNLOAD_URL + "?method=download"
                     + "&access_token=" + accessToken
                     + "&path=" + URLEncoder.encode(path, StandardCharsets.UTF_8.name());
-                log.debug("File download URL: {}", downloadUrl);
-                return downloadUrl;
+                log.info("Requesting download URL from: {}", apiUrl);
+
+                URL url = new URL(apiUrl);
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setConnectTimeout(10000);
+                conn.setReadTimeout(10000);
+                // The User-Agent MUST be 'pan.baidu.com'
+                conn.setRequestProperty("User-Agent", "pan.baidu.com");
+                // Disable auto-redirect to handle 302 response manually
+                conn.setInstanceFollowRedirects(false);
+
+                int responseCode = conn.getResponseCode();
+                log.info("Baidu Pan download API response code: {}", responseCode);
+
+                // Baidu Pan returns a 302 redirect to the actual download link
+                if (responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
+                    String downloadUrl = conn.getHeaderField("Location");
+                    log.info("Got redirect to actual download URL: {}", downloadUrl);
+                    if (downloadUrl != null) {
+                        // The real download url may also require the same User-Agent, 
+                        // but we can't control what the browser sends.
+                        // However, returning the final URL is the correct approach.
+                        // The https to http replacement is a common workaround for CDN issues.
+                        return downloadUrl.replace("https://", "http://");
+                    }
+                } else {
+                    log.error("Failed to get download URL. Response code: {}, Response message: {}",
+                              responseCode, conn.getResponseMessage());
+                    // Log the response body for debugging
+                    try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                        String line;
+                        StringBuilder response = new StringBuilder();
+                        while ((line = in.readLine()) != null) {
+                            response.append(line);
+                        }
+                        log.error("Error response body: {}", response.toString());
+                    } catch (Exception ex) {
+                        // ignore if can't read body
+                    }
+                }
             }
         } catch (Exception e) {
-            log.error("获取文件下载链接失败：{}", e.getMessage());
+            log.error("获取文件下载链接失败：{}", e.getMessage(), e);
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
         }
 
         return null;
