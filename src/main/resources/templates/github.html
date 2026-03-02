@@ -22,7 +22,6 @@
             width: 280px;
             background: #fff;
             box-shadow: 0 0 30px rgba(0,0,0,0.05);
-            transition: all 0.3s;
         }
 
         #sidebar .sidebar-header {
@@ -155,7 +154,7 @@
                                <h5 class="mb-1" th:text="${activity.title}"></h5>
                                <small th:text="${#temporals.format(activity.publishedAt, 'yyyy-MM-dd HH:mm')}"></small>
                            </div>
-                           <p class="mb-1">Click to view details on GitHub.</p>
+                           <div class="mb-1" th:utext="${activity.content}"></div>
                        </a>
                     </div>
                 </div>
