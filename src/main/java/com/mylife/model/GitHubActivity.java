@@ -4,6 +4,7 @@ import lombok.Data;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Column;
 import java.time.LocalDateTime;
 
 @Data
@@ -17,6 +18,9 @@ public class GitHubActivity {
     private String title;
 
     private String link;
+
+    @Column(columnDefinition = "TEXT")
+    private String content;
 
     private LocalDateTime publishedAt;
 
