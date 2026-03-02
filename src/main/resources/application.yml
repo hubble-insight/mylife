@@ -38,13 +38,17 @@ server:
 api:
   # Weibo Configuration (using RSSHub)
   weibo:
-    # Get your UID from your Weibo main page URL (e.g., https://weibo.com/u/12345678)
-    # Then construct the RSSHub URL like this:
-    rss-url: ${WEIBO_RSS_URL:https://rsshub.app/weibo/user/YOUR_UID}
+    # Get your UID from your Weibo main page URL (e.g., https://weibo.com/u/6507972437)
+    # RSSHub mirrors (choose one that works):
+    # - https://rsshub.app (official, rate limited)
+    # - https://rsshub.rssforever.com (community mirror)
+    # - https://rsshub.zeabur.app (community mirror)
+    # For stable usage, self-host RSSHub: https://docs.rsshub.app/deploy/
+    rss-url: ${WEIBO_RSS_URL:https://rsshub.app/weibo/user/6507972437}
 
   # GitHub Configuration
   github:
-    username: ${GITHUB_USERNAME:YOUR_USERNAME}
+    username: ${GITHUB_USERNAME:hubble-insight}
 
   # Baidu Pan API Configuration
   # Get these from https://pan.baidu.com/union

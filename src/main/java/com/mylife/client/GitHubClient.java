@@ -45,8 +45,18 @@ public class GitHubClient {
                 activity.setEventId(entry.getUri());
                 activity.setTitle(entry.getTitle());
                 activity.setLink(entry.getLink());
-                activity.setPublishedAt(
-                    LocalDateTime.ofInstant(entry.getPublishedDate().toInstant(), ZoneId.systemDefault()));
+
+                // Handle null published date
+                if (entry.getPublishedDate() != null) {
+                    activity.setPublishedAt(
+                        LocalDateTime.ofInstant(entry.getPublishedDate().toInstant(), ZoneId.systemDefault()));
+                } else if (entry.getUpdatedDate() != null) {
+                    activity.setPublishedAt(
+                        LocalDateTime.ofInstant(entry.getUpdatedDate().toInstant(), ZoneId.systemDefault()));
+                } else {
+                    activity.setPublishedAt(LocalDateTime.now());
+                }
+
                 activity.setSyncedAt(LocalDateTime.now());
                 activities.add(activity);
             }
