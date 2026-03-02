@@ -7,13 +7,85 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link th:href="@{/css/style.css}" rel="stylesheet">
+    <style>
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 56px - 73px); /* Full height minus navbar and footer */
+        }
+        .card-file {
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            border: 1px solid #e9ecef;
+            border-radius: .75rem;
+            overflow: hidden;
+        }
+        .card-file:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        }
+        .card-img-top-container {
+            position: relative;
+            width: 100%;
+            padding-top: 75%; /* 4:3 aspect ratio */
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .card-img-top-container .card-img-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .card-icon-display {
+            font-size: 4rem;
+            color: #adb5bd;
+        }
+        .play-icon-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.85);
+            text-shadow: 0 0 15px rgba(0,0,0,0.6);
+            transition: color .2s ease;
+        }
+        .card-file:hover .play-icon-overlay {
+            color: rgba(255, 255, 255, 1);
+        }
+        .card-file .card-body {
+            padding: 0.75rem;
+        }
+        .card-file .card-title {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .card-file .card-footer {
+            background: none;
+            border-top: 1px solid #e9ecef;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .list-group-item .badge {
+            font-size: .8em;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
         <div class="container">
             <a class="navbar-brand" th:href="@{/home}">
-                <i class="bi bi-house-heart"></i> MyLife
+                <i class="bi bi-house-heart-fill"></i> MyLife
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -21,24 +93,16 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/home}">
-                            <i class="bi bi-speedometer2"></i> 首页
-                        </a>
+                        <a class="nav-link" th:href="@{/home}"><i class="bi bi-speedometer2"></i> 首页</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/weibo}">
-                            <i class="bi bi-weibo"></i> 动态
-                        </a>
+                        <a class="nav-link" th:href="@{/weibo}"><i class="bi bi-weibo"></i> 动态</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/resources}">
-                            <i class="bi bi-cloud"></i> 资源库
-                        </a>
+                        <a class="nav-link active" th:href="@{/resources}"><i class="bi bi-cloud-fill"></i> 资源库</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/oauth/baidu/status}">
-                            <i class="bi bi-shield-lock"></i> 授权管理
-                        </a>
+                        <a class="nav-link" th:href="@{/oauth/baidu/status}"><i class="bi bi-shield-lock-fill"></i> 授权管理</a>
                     </li>
                 </ul>
             </div>
@@ -46,527 +110,225 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="container my-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2><i class="bi bi-cloud"></i> 资源库</h2>
-            <div>
-                <a th:href="@{/resources(sync=true)}" class="btn btn-primary">
-                    <i class="bi bi-sync"></i> 同步资源
-                </a>
-            </div>
-        </div>
-
-        <!-- Filter Tabs -->
-        <ul class="nav nav-tabs mb-4">
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${currentType == 'all'} ? 'active'" th:href="@{/resources(type='all')}">
-                    <i class="bi bi-grid"></i> 全部
-                    <span class="badge bg-secondary" th:text="${fileCounts.get(T(com.mylife.model.FileType).DOCUMENT) + fileCounts.get(T(com.mylife.model.FileType).VIDEO) + fileCounts.get(T(com.mylife.model.FileType).AUDIO) + fileCounts.get(T(com.mylife.model.FileType).IMAGE)}">0</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${currentType == 'document'} ? 'active'" th:href="@{/resources(type='document')}">
-                    <i class="bi bi-file-earmark-text"></i> 文档
-                    <span class="badge bg-success" th:text="${fileCounts.get(T(com.mylife.model.FileType).DOCUMENT)}">0</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${currentType == 'video'} ? 'active'" th:href="@{/resources(type='video')}">
-                    <i class="bi bi-camera-video"></i> 视频
-                    <span class="badge bg-warning" th:text="${fileCounts.get(T(com.mylife.model.FileType).VIDEO)}">0</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${currentType == 'audio'} ? 'active'" th:href="@{/resources(type='audio')}">
-                    <i class="bi bi-music-note"></i> 音频
-                    <span class="badge bg-info" th:text="${fileCounts.get(T(com.mylife.model.FileType).AUDIO)}">0</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${currentType == 'image'} ? 'active'" th:href="@{/resources(type='image')}">
-                    <i class="bi bi-image"></i> 图片
-                    <span class="badge bg-primary" th:text="${fileCounts.get(T(com.mylife.model.FileType).IMAGE)}">0</span>
-                </a>
-            </li>
-        </ul>
-
-        <!-- Files Grid -->
-        <div th:if="${#lists.isEmpty(files)}" class="text-center py-5">
-            <i class="bi bi-inbox display-1 text-muted"></i>
-            <h4 class="mt-3 text-muted">暂无资源数据</h4>
-            <p class="text-muted">请点击上方按钮同步百度网盘资源</p>
-        </div>
-
-        <!-- Image Gallery View -->
-        <div th:if="${currentType == 'image'}" class="row g-3">
-            <div class="col-6 col-md-4 col-lg-3" th:each="file : ${files}">
-                <div class="card h-100 overflow-hidden" style="cursor: pointer;"
-                     th:attr="data-file-id=${file.fileId}, data-file-url=${file.downloadUrl}"
-                     onclick="openImageModal(this)">
-                    <div class="position-relative" style="padding-top: 100%;">
-                        <img th:if="${file.thumbnailUrl != null}"
-                             th:src="${file.thumbnailUrl}"
-                             class="card-img-top"
-                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"
-                             th:alt="${file.fileName}"
-                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22 viewBox=%220 0 24 24%22%3E%3Crect fill=%22%23ddd%22 width=%2224%22 height=%2224%22/%3E%3Ctext fill=%22%23999%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22%3EIMG%3C/text%3E%3C/svg%3E'">
-                        <div th:unless="${file.thumbnailUrl != null}"
-                             class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-light">
-                            <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
-                        </div>
+    <main class="container my-4 flex-grow-1">
+        <div class="row">
+            <!-- Sidebar -->
+            <aside class="col-lg-3">
+                <div class="sticky-top" style="top: 2rem;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="mb-0">分类</h4>
+                        <a th:href="@{/resources(sync=true)}" class="btn btn-sm btn-outline-primary" title="同步资源">
+                            <i class="bi bi-arrow-repeat"></i> 同步
+                        </a>
                     </div>
-                    <div class="card-body p-2">
-                        <small class="card-text text-truncate d-block" th:text="${file.fileName}" th:title="${file.fileName}"></small>
+                    <div class="list-group shadow-sm">
+                        <a th:href="@{/resources(type='all')}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" th:classappend="${currentType == 'all'} ? 'active'">
+                            <div><i class="bi bi-grid-fill me-2"></i>全部</div>
+                            <span class="badge" th:classappend="${currentType == 'all'} ? 'bg-light text-primary' : 'bg-secondary'" th:text="${fileCounts.get(T(com.mylife.model.FileType).DOCUMENT) + fileCounts.get(T(com.mylife.model.FileType).VIDEO) + fileCounts.get(T(com.mylife.model.FileType).AUDIO) + fileCounts.get(T(com.mylife.model.FileType).IMAGE)}"></span>
+                        </a>
+                        <a th:href="@{/resources(type='image')}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" th:classappend="${currentType == 'image'} ? 'active'">
+                            <div><i class="bi bi-image-fill me-2"></i>图片</div>
+                            <span class="badge" th:classappend="${currentType == 'image'} ? 'bg-light text-primary' : 'bg-primary'" th:text="${fileCounts.get(T(com.mylife.model.FileType).IMAGE)}"></span>
+                        </a>
+                        <a th:href="@{/resources(type='video')}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" th:classappend="${currentType == 'video'} ? 'active'">
+                            <div><i class="bi bi-film me-2"></i>视频</div>
+                            <span class="badge" th:classappend="${currentType == 'video'} ? 'bg-light text-primary' : 'bg-warning text-dark'" th:text="${fileCounts.get(T(com.mylife.model.FileType).VIDEO)}"></span>
+                        </a>
+                        <a th:href="@{/resources(type='audio')}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" th:classappend="${currentType == 'audio'} ? 'active'">
+                            <div><i class="bi bi-music-note-beamed me-2"></i>音频</div>
+                             <span class="badge" th:classappend="${currentType == 'audio'} ? 'bg-light text-primary' : 'bg-info text-dark'" th:text="${fileCounts.get(T(com.mylife.model.FileType).AUDIO)}"></span>
+                        </a>
+                        <a th:href="@{/resources(type='document')}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" th:classappend="${currentType == 'document'} ? 'active'">
+                            <div><i class="bi bi-file-earmark-text-fill me-2"></i>文档</div>
+                            <span class="badge" th:classappend="${currentType == 'document'} ? 'bg-light text-primary' : 'bg-success'" th:text="${fileCounts.get(T(com.mylife.model.FileType).DOCUMENT)}"></span>
+                        </a>
                     </div>
                 </div>
-            </div>
-        </div>
+            </aside>
 
-        <!-- Video Grid View -->
-        <div th:if="${currentType == 'video'}" class="row g-4">
-            <div class="col-md-6 col-lg-4" th:each="file : ${files}">
-                <div class="card h-100 file-card" style="cursor: pointer;"
-                     th:attr="data-file-id=${file.fileId}, data-file-url=${file.downloadUrl}, data-file-name=${file.fileName}, data-file-type=${file.extension}"
-                     onclick="openVideoModal(this)">
-                    <div class="card-body text-center py-4">
-                        <div class="mb-3">
-                            <i class="bi bi-play-circle text-warning" style="font-size: 4rem;"></i>
-                        </div>
-                        <h6 class="card-title text-truncate" th:text="${file.fileName}" th:title="${file.fileName}"></h6>
-                        <p class="card-text small text-muted">
-                            <i class="bi bi-clock"></i>
-                            <span th:text="${#temporals.format(file.modifiedTime, 'yyyy-MM-dd')}"></span>
-                            <span th:if="${file.fileSize > 0}" class="ms-2">
-                                <span th:text="${#numbers.formatDecimal(file.fileSize / 1024.0 / 1024.0, 0, 2)} + ' MB'"></span>
-                            </span>
-                        </p>
-                        <button class="btn btn-primary btn-sm mt-2">
-                            <i class="bi bi-play-fill"></i> 播放
-                        </button>
-                    </div>
+            <!-- Files Grid -->
+            <section class="col-lg-9">
+                <div th:if="${#lists.isEmpty(files)}" class="text-center py-5" style="margin-top: 20%;">
+                    <i class="bi bi-cloud-slash display-1 text-muted"></i>
+                    <h4 class="mt-3 text-muted">空空如也</h4>
+                    <p class="text-muted">请点击侧边栏的“同步”按钮来获取百度网盘资源</p>
                 </div>
-            </div>
-        </div>
 
-        <!-- Document List View -->
-        <div th:if="${currentType == 'document'}" class="row g-4">
-            <div class="col-md-6 col-lg-4" th:each="file : ${files}">
-                <div class="card h-100 file-card" style="cursor: pointer;"
-                     th:attr="data-file-id=${file.fileId}, data-file-url=${file.downloadUrl}, data-file-name=${file.fileName}, data-file-type=${file.extension}"
-                     onclick="openDocumentModal(this)">
-                    <div class="card-body">
-                        <div class="file-icon text-center mb-3">
-                            <i th:if="${file.extension == 'pdf'}" class="bi bi-file-earmark-pdf text-danger display-4"></i>
-                            <i th:if="${file.extension == 'md' or file.extension == 'txt'}" class="bi bi-file-earmark-text text-primary display-4"></i>
-                            <i th:if="${file.extension == 'doc' or file.extension == 'docx'}" class="bi bi-file-earmark-word text-primary display-4"></i>
-                            <i th:if="${file.extension == 'xls' or file.extension == 'xlsx'}" class="bi bi-file-earmark-excel text-success display-4"></i>
-                            <i th:if="${file.extension == 'ppt' or file.extension == 'pptx'}" class="bi bi-file-earmark-slides text-warning display-4"></i>
-                            <i th:unless="${file.extension == 'pdf' or file.extension == 'md' or file.extension == 'txt' or file.extension == 'doc' or file.extension == 'docx' or file.extension == 'xls' or file.extension == 'xlsx' or file.extension == 'ppt' or file.extension == 'pptx'}"
-                               class="bi bi-file-earmark-text text-success display-4"></i>
-                        </div>
-                        <h6 class="card-title text-truncate" th:text="${file.fileName}" th:title="${file.fileName}"></h6>
-                        <p class="card-text small text-muted">
-                            <i class="bi bi-clock"></i>
-                            <span th:text="${#temporals.format(file.modifiedTime, 'yyyy-MM-dd')}"></span>
-                            <span th:if="${file.fileSize > 0}" class="ms-2">
-                                <span th:text="${#numbers.formatDecimal(file.fileSize / 1024.0 / 1024.0, 0, 2)} + ' MB'"></span>
-                            </span>
-                        </p>
-                        <button class="btn btn-outline-primary btn-sm w-100">
-                            <i class="bi bi-eye"></i> 查看
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+                <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4" th:unless="${#lists.isEmpty(files)}">
+                    <div class="col" th:each="file : ${files}">
+                        <div class="card h-100 card-file"
+                             th:attr="data-file-id=${file.fileId}, data-file-url=${file.downloadUrl}, data-file-name=${file.fileName}, data-file-type=${file.extension}, data-file-category=${file.fileType.name()}"
+                             onclick="openFileModal(this)">
 
-        <!-- Audio List View -->
-        <div th:if="${currentType == 'audio'}" class="row g-4">
-            <div class="col-md-6 col-lg-4" th:each="file : ${files}">
-                <div class="card h-100 file-card">
-                    <div class="card-body">
-                        <div class="file-icon text-center mb-3">
-                            <i class="bi bi-music-note text-info display-4"></i>
-                        </div>
-                        <h6 class="card-title text-truncate" th:text="${file.fileName}" th:title="${file.fileName}"></h6>
-                        <p class="card-text small text-muted">
-                            <i class="bi bi-clock"></i>
-                            <span th:text="${#temporals.format(file.modifiedTime, 'yyyy-MM-dd')}"></span>
-                            <span th:if="${file.fileSize > 0}" class="ms-2">
-                                <span th:text="${#numbers.formatDecimal(file.fileSize / 1024.0 / 1024.0, 0, 2)} + ' MB'"></span>
-                            </span>
-                        </p>
-                        <audio controls class="w-100 mt-2">
-                            <source th:src="${file.downloadUrl}" th:type="${'audio/' + file.extension}">
-                            您的浏览器不支持音频播放
-                        </audio>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Default View (All Files) -->
-        <div th:if="${currentType == 'all' && !#lists.isEmpty(files)}" class="row g-4">
-            <div class="col-md-6 col-lg-4" th:each="file : ${files}">
-                <div class="card h-100 file-card">
-                    <div class="card-body">
-                        <div class="file-icon text-center mb-3">
-                            <i th:if="${file.fileType.name() == 'DOCUMENT'}" class="bi bi-file-earmark-text text-success display-4"></i>
-                            <i th:if="${file.fileType.name() == 'VIDEO'}" class="bi bi-camera-video text-warning display-4"></i>
-                            <i th:if="${file.fileType.name() == 'AUDIO'}" class="bi bi-music-note text-info display-4"></i>
-                            <i th:if="${file.fileType.name() == 'IMAGE'}" class="bi bi-image text-primary display-4"></i>
-                            <i th:if="${file.fileType.name() == 'OTHER' || file.fileType == null}" class="bi bi-file-earmark text-secondary display-4"></i>
-                        </div>
-                        <h6 class="card-title text-truncate" th:text="${file.fileName}" th:title="${file.fileName}"></h6>
-                        <p class="card-text small text-muted">
-                            <i class="bi bi-clock"></i>
-                            <span th:text="${#temporals.format(file.modifiedTime, 'yyyy-MM-dd')}"></span>
-                            <span th:if="${file.fileSize > 0}" class="ms-2">
-                                <span th:text="${#numbers.formatDecimal(file.fileSize / 1024.0 / 1024.0, 0, 2)} + ' MB'"></span>
-                            </span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Image Modal -->
-        <div class="modal fade" id="imageModal" tabindex="-1">
-            <div class="modal-dialog modal-xl modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="imageModalTitle"></h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body text-center p-0" style="background: #000;">
-                        <img id="imageModalImg" src="" class="img-fluid" style="max-height: 80vh;">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Video Modal -->
-        <div class="modal fade" id="videoModal" tabindex="-1">
-            <div class="modal-dialog modal-xl modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="videoModalTitle"></h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="stopVideo()"></button>
-                    </div>
-                    <div class="modal-body p-0" style="background: #000;">
-                        <video id="videoPlayer" controls style="width: 100%; max-height: 80vh;">
-                            <source id="videoSource" src="" type="">
-                            您的浏览器不支持视频播放
-                        </video>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Document Modal -->
-        <div class="modal fade" id="documentModal" tabindex="-1">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="documentModalTitle"></h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="documentContent" class="text-center">
-                            <div class="alert alert-info">
-                                <i class="bi bi-info-circle"></i>
-                                <span>文档内容预览区域</span>
+                            <div class="card-img-top-container">
+                                <img th:if="${file.fileType.name() == 'IMAGE' and file.thumbnailUrl != null}"
+                                     th:src="${file.thumbnailUrl}" class="card-img-top" th:alt="${file.fileName}"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                
+                                <div class="card-icon-display" th:if="${file.fileType.name() != 'IMAGE' or file.thumbnailUrl == null}">
+                                    <i th:if="${file.fileType.name() == 'VIDEO'}" class="bi bi-film"></i>
+                                    <i th:if="${file.fileType.name() == 'AUDIO'}" class="bi bi-music-note-beamed"></i>
+                                    <i th:if="${file.fileType.name() == 'DOCUMENT'}" class="bi bi-file-earmark-text"></i>
+                                    <i th:if="${file.fileType.name() == 'IMAGE'}" class="bi bi-image-alt"></i>
+                                    <i th:if="${file.fileType.name() == 'OTHER' or file.fileType == null}" class="bi bi-file-earmark-zip"></i>
+                                </div>
+                                <div th:if="${file.fileType.name() == 'VIDEO'}" class="play-icon-overlay">
+                                    <i class="bi bi-play-circle-fill"></i>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-title text-truncate" th:title="${file.fileName}" th:text="${file.fileName}"></p>
+                            </div>
+                            <div class="card-footer" th:if="${file.fileSize > 0}">
+                                <small class="text-muted" th:text="${#numbers.formatDecimal(file.fileSize / 1024.0 / 1024.0, 0, 2)} + ' MB'"></small>
+                                <small class="text-muted" th:text="${#temporals.format(file.modifiedTime, 'yy-MM-dd')}"></small>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <a id="documentDownload" href="#" class="btn btn-primary" download>
-                            <i class="bi bi-download"></i> 下载
-                        </a>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </main>
 
+    <!-- Modals -->
+    <!-- Image Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="imageModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center p-0" style="background: #000;"><img id="imageModalImg" src="" class="img-fluid" style="max-height: 90vh;"></div></div></div></div>
+    <!-- Video Modal -->
+    <div class="modal fade" id="videoModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="videoModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal" onclick="stopVideo()"></button></div><div class="modal-body p-0" style="background: #000;"><video id="videoPlayer" controls style="width: 100%; max-height: 90vh;"><source id="videoSource" src="" type=""></video></div></div></div></div>
+    <!-- Audio Modal -->
+    <div class="modal fade" id="audioModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="audioModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal" onclick="stopAudio()"></button></div><div class="modal-body p-4"><audio id="audioPlayer" controls class="w-100"><source id="audioSource" src="" type=""></audio></div></div></div></div>
+    <!-- Document Modal -->
+    <div class="modal fade" id="documentModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content" style="height: 95vh;"><div class="modal-header"><h5 class="modal-title" id="documentModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body flex-grow-1" style="overflow-y: auto;"><div id="documentContent" class="h-100"></div></div><div class="modal-footer"><a id="documentDownload" href="#" class="btn btn-primary" download><i class="bi bi-download"></i> 下载</a><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button></div></div></div></div>
+
+
     <!-- Footer -->
-    <footer class="bg-light py-4 mt-4">
+    <footer class="bg-light py-3 mt-auto">
         <div class="container text-center">
-            <p class="mb-0 text-muted">&copy; 2026 MyLife - 个人生活记录</p>
+            <p class="mb-0 text-muted small">&copy; 2026 MyLife - 个人生活记录</p>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let imageModal, videoModal, documentModal;
+        let imageModal, videoModal, documentModal, audioModal;
 
         document.addEventListener('DOMContentLoaded', function() {
             imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
             videoModal = new bootstrap.Modal(document.getElementById('videoModal'));
             documentModal = new bootstrap.Modal(document.getElementById('documentModal'));
+            audioModal = new bootstrap.Modal(document.getElementById('audioModal'));
         });
 
-        // Open image modal
-        function openImageModal(element) {
-            const fileId = element.getAttribute('data-file-id');
-            const fileUrl = element.getAttribute('data-file-url');
-            const fileName = element.querySelector('.card-text')?.textContent?.trim() || '图片';
+        function openFileModal(element) {
+            const category = element.getAttribute('data-file-category');
+            if (category === 'IMAGE') {
+                openImageModal(element);
+            } else if (category === 'VIDEO') {
+                openVideoModal(element);
+            } else if (category === 'AUDIO') {
+                openAudioModal(element);
+            } else { // DOCUMENT or OTHER
+                openDocumentModal(element);
+            }
+        }
 
+        function openImageModal(element) {
+            const fileUrl = element.getAttribute('data-file-url');
+            const fileName = element.getAttribute('data-file-name');
             document.getElementById('imageModalTitle').textContent = fileName;
-            // 使用 view 接口直接获取图片流
-            document.getElementById('imageModalImg').src = fileUrl || '/resources/api/file/' + fileId + '/view';
+            document.getElementById('imageModalImg').src = fileUrl;
             imageModal.show();
         }
 
-        // Open video modal
         function openVideoModal(element) {
-            const fileId = element.getAttribute('data-file-id');
             const fileUrl = element.getAttribute('data-file-url');
-            const fileName = element.getAttribute('data-file-name') || '视频';
+            const fileName = element.getAttribute('data-file-name');
+            const fileType = element.getAttribute('data-file-type');
 
             document.getElementById('videoModalTitle').textContent = fileName;
             const videoPlayer = document.getElementById('videoPlayer');
             const videoSource = document.getElementById('videoSource');
-            // 使用 view 接口直接获取视频流
-            videoSource.src = fileUrl || '/resources/api/file/' + fileId + '/view';
-            videoSource.type = getVideoType(element.getAttribute('data-file-type') || '');
+            videoSource.src = fileUrl;
+            videoSource.type = getVideoType(fileType);
             videoPlayer.load();
             videoModal.show();
         }
+        
+        function openAudioModal(element) {
+            const fileUrl = element.getAttribute('data-file-url');
+            const fileName = element.getAttribute('data-file-name');
+            const fileType = element.getAttribute('data-file-type');
 
-        // Get video MIME type
-        function getVideoType(extension) {
-            const types = {
-                'mp4': 'video/mp4',
-                'webm': 'video/webm',
-                'ogg': 'video/ogg',
-                'mov': 'video/quicktime',
-                'avi': 'video/x-msvideo',
-                'wmv': 'video/x-ms-wmv'
-            };
-            return types[extension.toLowerCase()] || 'video/mp4';
+            document.getElementById('audioModalTitle').textContent = fileName;
+            const audioPlayer = document.getElementById('audioPlayer');
+            const audioSource = document.getElementById('audioSource');
+            audioSource.src = fileUrl;
+            audioSource.type = getAudioType(fileType);
+            audioPlayer.load();
+            audioModal.show();
+        }
+        
+        function openDocumentModal(element) {
+            const fileUrl = element.getAttribute('data-file-url');
+            const fileName = element.getAttribute('data-file-name');
+            const fileType = element.getAttribute('data-file-type');
+
+            document.getElementById('documentModalTitle').textContent = fileName;
+            document.getElementById('documentDownload').href = fileUrl;
+            
+            const docContent = document.getElementById('documentContent');
+            const fileExtension = fileType.toLowerCase();
+            
+            const officeTypes = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'];
+            const textTypes = ['md', 'txt', 'log', 'csv', 'java', 'js', 'py', 'go', 'rs', 'c', 'cpp', 'h', 'html', 'css', 'json', 'xml', 'yaml'];
+
+            if (fileExtension === 'pdf') {
+                docContent.innerHTML = `<iframe src="${fileUrl}" style="border:0; width:100%; height:100%;"></iframe>`;
+            } else if (officeTypes.includes(fileExtension)) {
+                const encodedUrl = encodeURIComponent(fileUrl);
+                docContent.innerHTML = `<iframe src="https://view.xdocin.com/view?src=${encodedUrl}" style="border:0; width:100%; height:100%;" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>`;
+            } else if (textTypes.includes(fileExtension)) {
+                loadTextContent(fileUrl, docContent);
+            } else {
+                docContent.innerHTML = `<div class="alert alert-light text-center mt-5"><i class="bi bi-exclamation-circle h1"></i><p class="mt-3">该文件类型暂不支持在线预览，请下载后查看。</p></div>`;
+            }
+            documentModal.show();
         }
 
-        // Stop video when closing modal
         function stopVideo() {
             const videoPlayer = document.getElementById('videoPlayer');
             videoPlayer.pause();
             videoPlayer.src = '';
         }
-
-        // Open document modal
-        function openDocumentModal(element) {
-            const fileId = element.getAttribute('data-file-id');
-            const fileUrl = element.getAttribute('data-file-url');
-            const fileName = element.getAttribute('data-file-name') || '文档';
-            const fileType = element.getAttribute('data-file-type') || '';
-
-            document.getElementById('documentModalTitle').textContent = fileName;
-            const downloadUrl = fileUrl || '/resources/api/file/' + fileId + '/view';
-            document.getElementById('documentDownload').href = downloadUrl;
-
-            const docContent = document.getElementById('documentContent');
-            const fileExtension = fileType.toLowerCase();
-
-            // 支持的 Office 文档类型（使用 Microsoft 365 在线查看器）
-            const officeTypes = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'];
-            // 支持的文本类型
-            const textTypes = ['md', 'txt', 'log', 'csv'];
-            // 支持的代码类型
-            const codeTypes = ['js', 'ts', 'py', 'java', 'go', 'rs', 'c', 'cpp', 'h', 'html', 'css', 'json', 'xml', 'yaml', 'yml'];
-
-            // Show different content based on file type
-            if (fileType === 'pdf') {
-                // PDF 文件 - 直接 iframe 预览
-                docContent.innerHTML = `
-                    <div class="ratio ratio-1x1" style="max-height: 60vh;">
-                        <iframe src="${downloadUrl}"
-                                style="border: 0;" width="100%" height="100%"></iframe>
-                    </div>
-                `;
-            } else if (officeTypes.includes(fileExtension)) {
-                // Office 文档 - 使用 Microsoft 365 在线查看器
-                // 注意：需要公网可访问的 URL，本地开发时可能需要内网穿透
-                const encodedUrl = encodeURIComponent(downloadUrl);
-                docContent.innerHTML = `
-                    <div class="ratio ratio-1x1" style="max-height: 60vh;">
-                        <iframe src="https://view.officeapps.live.com/op/view.aspx?src=${encodedUrl}"
-                                style="border: 0;" width="100%" height="100%"
-                                sandbox="allow-scripts allow-same-origin allow-popups allow-forms">
-                        </iframe>
-                    </div>
-                    <div class="alert alert-info mt-2 mb-0">
-                        <i class="bi bi-info-circle"></i>
-                        <small>使用 Microsoft 365 在线查看器预览。如无法加载，请下载文件查看。</small>
-                    </div>
-                `;
-            } else if (textTypes.includes(fileExtension)) {
-                // 文本文件 - 使用 fetch 加载内容
-                if (fileExtension === 'md') {
-                    // Markdown - 使用 marked.js 渲染
-                    loadMarkdownContent(downloadUrl, docContent);
-                } else {
-                    // 其他文本文件
-                    loadTextContent(downloadUrl, docContent, fileExtension);
-                }
-            } else if (codeTypes.includes(fileExtension)) {
-                // 代码文件 - 带语法高亮
-                loadCodeContent(downloadUrl, docContent, fileExtension);
-            } else {
-                // 其他文件类型 - 提供下载
-                docContent.innerHTML = `
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle"></i>
-                        <p>该文件类型暂不支持在线预览，请下载后查看</p>
-                        <a href="${downloadUrl}"
-                           class="btn btn-primary mt-2" download>
-                            <i class="bi bi-download"></i> 下载文件
-                        </a>
-                    </div>
-                `;
-            }
-
-            documentModal.show();
+        
+        function stopAudio() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.pause();
+            audioPlayer.src = '';
+        }
+        
+        function getVideoType(ext) {
+            const types = {'mp4': 'video/mp4', 'webm': 'video/webm', 'ogg': 'video/ogg'};
+            return types[ext.toLowerCase()] || 'video/mp4';
+        }
+        
+        function getAudioType(ext) {
+            const types = {'mp3': 'audio/mpeg', 'wav': 'audio/wav', 'ogg': 'audio/ogg'};
+            return types[ext.toLowerCase()] || 'audio/mpeg';
         }
 
-        // Load and render Markdown content
-        function loadMarkdownContent(url, container) {
-            container.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2">加载 Markdown 内容...</p></div>';
-
+        function loadTextContent(url, container) {
+            container.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>';
             fetch(url)
                 .then(response => response.text())
                 .then(text => {
-                    // 简单的 Markdown 渲染
-                    const html = renderMarkdown(text);
-                    container.innerHTML = `
-                        <div class="markdown-content p-3" style="text-align: left; max-height: 60vh; overflow-y: auto;">
-                            ${html}
-                        </div>
-                    `;
-                })
-                .catch(err => {
-                    console.error('加载 Markdown 失败:', err);
-                    container.innerHTML = `
-                        <div class="alert alert-warning">
-                            <i class="bi bi-exclamation-triangle"></i>
-                            <p>加载文件失败，请下载查看</p>
-                            <a href="${url}" class="btn btn-primary mt-2" download>
-                                <i class="bi bi-download"></i> 下载文件
-                            </a>
-                        </div>
-                    `;
-                });
-        }
-
-        // Load text content
-        function loadTextContent(url, container, extension) {
-            container.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2">加载文本内容...</p></div>';
-
-            fetch(url)
-                .then(response => response.text())
-                .then(text => {
-                    // 限制显示长度
-                    const maxLength = 50000;
-                    const displayText = text.length > maxLength ? text.substring(0, maxLength) + '...（内容过长，已截断）' : text;
-                    const escapedText = escapeHtml(displayText);
-
-                    container.innerHTML = `
-                        <div class="text-content p-3" style="text-align: left; max-height: 60vh; overflow-y: auto;">
-                            <pre style="margin: 0; font-family: monospace; white-space: pre-wrap; word-wrap: break-word;">${escapedText}</pre>
-                        </div>
-                    `;
+                    const escapedText = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    container.innerHTML = `<pre style="white-space: pre-wrap; word-break: break-all; height: 100%;">${escapedText}</pre>`;
                 })
                 .catch(err => {
                     console.error('加载文本失败:', err);
-                    container.innerHTML = `
-                        <div class="alert alert-warning">
-                            <i class="bi bi-exclamation-triangle"></i>
-                            <p>加载文件失败，请下载查看</p>
-                            <a href="${url}" class="btn btn-primary mt-2" download>
-                                <i class="bi bi-download"></i> 下载文件
-                            </a>
-                        </div>
-                    `;
+                    container.innerHTML = '<div class="alert alert-warning">加载文件内容失败。</div>';
                 });
-        }
-
-        // Load code content with syntax highlighting
-        function loadCodeContent(url, container, extension) {
-            container.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2">加载代码内容...</p></div>';
-
-            fetch(url)
-                .then(response => response.text())
-                .then(text => {
-                    const escapedText = escapeHtml(text);
-                    container.innerHTML = `
-                        <div class="code-content p-3" style="text-align: left; max-height: 60vh; overflow-y: auto;">
-                            <pre style="margin: 0; background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto;"><code class="language-${extension}">${escapedText}</code></pre>
-                        </div>
-                    `;
-                })
-                .catch(err => {
-                    console.error('加载代码失败:', err);
-                    container.innerHTML = `
-                        <div class="alert alert-warning">
-                            <i class="bi bi-exclamation-triangle"></i>
-                            <p>加载文件失败，请下载查看</p>
-                            <a href="${url}" class="btn btn-primary mt-2" download>
-                                <i class="bi bi-download"></i> 下载文件
-                            </a>
-                        </div>
-                    `;
-                });
-        }
-
-        // Simple Markdown renderer
-        function renderMarkdown(md) {
-            let html = md;
-
-            // 转义 HTML
-            html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-            // 标题
-            html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-            html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-            html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-
-            // 粗体
-            html = html.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
-
-            // 斜体
-            html = html.replace(/\*(.*?)\*/gim, '<em>$1</em>');
-
-            // 代码块
-            html = html.replace(/```([\s\S]*?)```/gim, '<pre style="background: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto;"><code>$1</code></pre>');
-
-            // 行内代码
-            html = html.replace(/`(.*?)`/gim, '<code style="background: #f4f4f4; padding: 2px 6px; border-radius: 3px;">$1</code>');
-
-            // 链接
-            html = html.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2" target="_blank">$1</a>');
-
-            // 图片
-            html = html.replace(/!\[(.*?)\]\((.*?)\)/gim, '<img src="$2" alt="$1" style="max-width: 100%; height: auto; margin: 10px 0;">');
-
-            // 无序列表
-            html = html.replace(/^\s*[-*+]\s+(.*$)/gim, '<li>$1</li>');
-            html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-
-            // 段落
-            html = html.replace(/^(?!<[huplo]|<li|<ul|<pre)(.+)$/gim, '<p>$1</p>');
-
-            // 换行
-            html = html.replace(/\n/gim, '<br>');
-
-            return html;
-        }
-
-        // Escape HTML
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
         }
     </script>
 </body>
